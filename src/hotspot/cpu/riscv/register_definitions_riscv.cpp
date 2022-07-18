@@ -187,6 +187,7 @@ REGISTER_DEFINITION(Register, xthread);
 REGISTER_DEFINITION(Register, xbcp);
 REGISTER_DEFINITION(Register, xdispatch);
 REGISTER_DEFINITION(Register, esp);
+REGISTER_DEFINITION(Register, x19_sender_sp);
 
 REGISTER_DEFINITION(Register, t0);
 REGISTER_DEFINITION(Register, t1);
