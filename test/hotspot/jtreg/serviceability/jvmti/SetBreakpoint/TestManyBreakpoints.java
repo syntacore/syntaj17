@@ -26,7 +26,7 @@
  * @bug 8144992
  * @requires vm.jvmti
  * @modules java.base/jdk.internal.org.objectweb.asm
- * @run main/othervm/native -agentlib:TestManyBreakpoints
+ * @run main/othervm/native/timeout=1200 -agentlib:TestManyBreakpoints
  *                          -Xlog:gc+metaspace
  *                          -Xint
  *                          -XX:MetaspaceSize=16K -XX:MaxMetaspaceSize=64M
