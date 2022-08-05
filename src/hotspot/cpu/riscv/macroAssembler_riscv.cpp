@@ -1450,7 +1450,7 @@ void MacroAssembler::store_sized_value(Address dst, Register src, size_t size_in
 // reverse bytes in halfword in lower 16 bits and sign-extend
 // Rd[15:0] = Rs[7:0] Rs[15:8] (sign-extend to 64 bits)
 void MacroAssembler::revb_h_h(Register Rd, Register Rs, Register tmp) {
-  if (UseZbb) {
+  if (UseZbb || UseRevB) {
     rev8(Rd, Rs);
     srai(Rd, Rd, 48);
     return;
@@ -1467,7 +1467,7 @@ void MacroAssembler::revb_h_h(Register Rd, Register Rs, Register tmp) {
 // reverse bytes in lower word and sign-extend
 // Rd[31:0] = Rs[7:0] Rs[15:8] Rs[23:16] Rs[31:24] (sign-extend to 64 bits)
 void MacroAssembler::revb_w_w(Register Rd, Register Rs, Register tmp1, Register tmp2) {
-  if (UseZbb) {
+  if (UseZbb || UseRevB) {
     rev8(Rd, Rs);
     srai(Rd, Rd, 32);
     return;
@@ -1484,7 +1484,7 @@ void MacroAssembler::revb_w_w(Register Rd, Register Rs, Register tmp1, Register 
 // reverse bytes in halfword in lower 16 bits and zero-extend
 // Rd[15:0] = Rs[7:0] Rs[15:8] (zero-extend to 64 bits)
 void MacroAssembler::revb_h_h_u(Register Rd, Register Rs, Register tmp) {
-  if (UseZbb) {
+  if (UseZbb || UseRevB) {
     rev8(Rd, Rs);
     srli(Rd, Rd, 48);
     return;
@@ -1572,7 +1572,7 @@ void MacroAssembler::revb_w(Register Rd, Register Rs, Register tmp1, Register tm
 // reverse bytes in doubleword
 // Rd[63:0] = Rs[7:0] Rs[15:8] Rs[23:16] Rs[31:24] Rs[39:32] Rs[47,40] Rs[55,48] Rs[63:56]
 void MacroAssembler::revb(Register Rd, Register Rs, Register tmp1, Register tmp2) {
-  if (UseZbb) {
+  if (UseZbb || UseRevB) {
     rev8(Rd, Rs);
     return;
   }

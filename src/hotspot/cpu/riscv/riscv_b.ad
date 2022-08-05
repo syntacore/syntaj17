@@ -178,7 +178,7 @@ instruct convI2UL_reg_reg_b(iRegLNoSp dst, iRegIorL2I src, immL_32bits mask) %{
 
 // BSWAP instructions
 instruct bytes_reverse_int_b(iRegINoSp dst, iRegIorL2I src) %{
-  predicate(UseZbb);
+  predicate(UseZbb || UseRevB);
   match(Set dst (ReverseBytesI src));
 
   ins_cost(ALU_COST * 2);
@@ -192,7 +192,7 @@ instruct bytes_reverse_int_b(iRegINoSp dst, iRegIorL2I src) %{
 %}
 
 instruct bytes_reverse_long_b(iRegLNoSp dst, iRegL src) %{
-  predicate(UseZbb);
+  predicate(UseZbb || UseRevB);
   match(Set dst (ReverseBytesL src));
 
   ins_cost(ALU_COST);
@@ -206,7 +206,7 @@ instruct bytes_reverse_long_b(iRegLNoSp dst, iRegL src) %{
 %}
 
 instruct bytes_reverse_unsigned_short_b(iRegINoSp dst, iRegIorL2I src) %{
-  predicate(UseZbb);
+  predicate(UseZbb || UseRevB);
   match(Set dst (ReverseBytesUS src));
 
   ins_cost(ALU_COST * 2);
@@ -220,7 +220,7 @@ instruct bytes_reverse_unsigned_short_b(iRegINoSp dst, iRegIorL2I src) %{
 %}
 
 instruct bytes_reverse_short_b(iRegINoSp dst, iRegIorL2I src) %{
-  predicate(UseZbb);
+  predicate(UseZbb || UseRevB);
   match(Set dst (ReverseBytesS src));
 
   ins_cost(ALU_COST * 2);
