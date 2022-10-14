@@ -842,7 +842,9 @@ define SetupRunJtregTestBody
   endif
 
   clean-workdir-$1:
+  ifeq ($$(JTREG_STATUS),)
 	$$(RM) -r $$($1_TEST_SUPPORT_DIR)
+  endif
 
   $1_COMMAND_LINE := \
       $$(JAVA) $$($1_JTREG_LAUNCHER_OPTIONS) \
