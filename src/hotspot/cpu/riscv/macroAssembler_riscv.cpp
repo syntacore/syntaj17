@@ -717,7 +717,7 @@ void MacroAssembler::vfneg_v(VectorRegister vd, VectorRegister vs) {
   vfsgnjn_vv(vd, vs, vs);
 }
 
-void MacroAssembler::la(Register Rd, const address dest) {
+void MacroAssembler::la(Register Rd, const address &dest) {
   int64_t offset = dest - pc();
   if (is_offset_in_range(offset, 32)) {
     auipc(Rd, (int32_t)offset + 0x800);  //0x800, Note:the 11th sign bit
@@ -753,9 +753,7 @@ void MacroAssembler::la(Register Rd, const Address &adr) {
 }
 
 void MacroAssembler::la(Register Rd, Label &label) {
-  void (Assembler::* fptr)(Register, const address) = static_cast<void (Assembler::*)(Register, const address)>(&MacroAssembler::la);
-  wrap_label(Rd, label, fptr);
- // wrap_label(Rd, label, &MacroAssembler::la);
+  la(Rd, target(label));
 }
 
 #define INSN(NAME)                                                                \
@@ -3892,7 +3890,7 @@ address MacroAssembler::zero_words(Register ptr, Register cnt)
 
 // base:  Address of a buffer to be zeroed, 8 bytes aligned.
 // cnt:   Immediate count in HeapWords.
-void MacroAssembler::zero_words(Register base, uint64_t cnt)
+void MacroAssembler::zero_words(Register base, u_int64_t cnt)
 {
   assert_different_registers(base, t0, t1);
 
@@ -3981,43 +3979,6 @@ void MacroAssembler::fill_words(Register base, Register cnt, Register value)
   bgez(cnt, loop);
 
   bind(fini);
-}
-
-// Zero blocks of memory by using CBO.ZERO.
-//
-// Aligns the base address first sufficiently for CBO.ZERO, then uses
-// CBO.ZERO repeatedly for every full block.  cnt is the size to be
-// zeroed in HeapWords.  Returns the count of words left to be zeroed
-// in cnt.
-//
-// NOTE: This is intended to be used in the zero_blocks() stub.  If
-// you want to use it elsewhere, note that cnt must be >= CacheLineSize.
-void MacroAssembler::zero_dcache_blocks(Register base, Register cnt, Register tmp1, Register tmp2) {
-  Label initial_table_end, loop;
-
-  // Align base with cache line size.
-  neg(tmp1, base);
-  andi(tmp1, tmp1, CacheLineSize - 1);
-
-  // tmp1: the number of bytes to be filled to align the base with cache line size.
-  add(base, base, tmp1);
-  srai(tmp2, tmp1, 3);
-  sub(cnt, cnt, tmp2);
-  srli(tmp2, tmp1, 1);
-  la(tmp1, initial_table_end);
-  sub(tmp2, tmp1, tmp2);
-  jr(tmp2);
-  for (int i = -CacheLineSize + wordSize; i < 0; i += wordSize) {
-    sd(zr, Address(base, i));
-  }
-  bind(initial_table_end);
-
-  mv(tmp1, CacheLineSize / wordSize);
-  bind(loop);
-  cbo_zero(base);
-  sub(cnt, cnt, tmp1);
-  add(base, base, CacheLineSize);
-  bge(cnt, tmp1, loop);
 }
 
 #define FCVT_SAFE(FLOATCVT, FLOATEQ)                                                             \
